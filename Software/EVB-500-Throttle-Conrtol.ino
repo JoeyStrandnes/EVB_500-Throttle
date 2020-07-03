@@ -7,8 +7,8 @@ const int ButtonPin = 4;
 int ButtonState = 0;
 
 //Values for the throttle adjustment
-int MIN = 40; 
-int MAX = 225;
+const int MIN = 40; 
+const int MAX = 225;
 int Counter = MIN;  
 
 void setup() {

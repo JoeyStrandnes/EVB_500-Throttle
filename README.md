@@ -1,11 +1,11 @@
 # EVB 500 Throttle Control
-###### This is a short summery of the inner workings of the throttle control and how to easily emulate and fix it.
+###### This is a short summery of the inner workings of the throttle control and how to easily emulate and fix it if it breaks. 
 
 ###### This is not a guide on increasing the power or speed of the electric scooter. 
 
 
 
-###### The throttle control of my friends EVB 500 electric scooter broke and I offered to fixe it. The throttle sensors leads had broken of and needed replacement. 
+###### The throttle control of my friends EVB 500 electric scooter broke and I offered to fix it. The throttle sensors leads had broken of and needed replacement. 
 
 
 
@@ -13,7 +13,7 @@
 
 ###### The throttle consists of two parts, one moving (handle) and one static.  The handle has embedded magnets that rotate with the handle and the  static part has a linear hall effect sensor that measures the magnetic field and outputs a analog voltage proportional to the measured magnetic field. 
 
-###### The EVB 500 uses the D49E-757H, 49E-Series linear hall effect sensor by YANGZHOU POSITIONING TECH. The sensor is directly connected between VCC (~5V) red cable, GND (black cable) and outputs a analog voltage between 0.9V-4.2V on the green cable.  A control pin voltage equal to 4.2V will result in MAX throttle and <0.9V results in no power going to the motor. The voltage in-between the thresholds is linearly proportional to the speed. Example;  2.55V would result in 50% motor speed.
+###### The EVB 500 uses the [D49E-757H](https://github.com/JoeyStrandnes/EVB_500-Throttle/blob/master/Datasheets/K1139513440.pdf), 49E-Series linear hall effect sensor by YANGZHOU POSITIONING TECH. The sensor is directly connected between VCC (~5V) red cable, GND (black cable) and outputs a analog voltage between 0.9V-4.2V on the green cable.  A control pin voltage equal to 4.2V will result in MAX throttle and <0.9V results in no power going to the motor. The voltage in-between the thresholds is linearly proportional to the speed. Example;  2.55V would result in 50% motor speed.
 
 ###### The main control unit of the electric scooter has some sort of sanity check and refuses an instant 4.2V on the throttle pin (green cable) so a switch between VCC and throttle pin will not work (not even with a voltage divider or regulated 4.2V). 
 
@@ -29,7 +29,7 @@
 
 ###### An Arduino micro (ATMega32u4) was used to convert the binary ON/OFF signal from the button to a value that the main controller could read. Virtually any microcontroller could be used as long as it has a PWM output. The button is connected to a regular digital pin and the green wire (motor controller/ throttle cable) is connected to a microcontroller pin compatible with PWM. 
 
-###### A low pass filter was connected on the microcontroller output to get a cleaner analog signal but was not needed, the electric scooter was able to take the "raw" PWM signal without any problems. 
+###### A low pass filter was firstly connected on the microcontroller output to get a cleaner analog signal but was not needed, the electric scooter was able to take the "raw" PWM signal without any problems so the low pass filter was removed.
 
 ![Electrical connections](https://i.imgur.com/B2swCKA.png)
 
@@ -39,7 +39,7 @@
 
 ###### The microcontroller polls the pin that the button is connected, the microcontroller outputs a PWM value of ~0.9V  if the button is not pressed, running function "StopMotor". The microcontroller will output a PWM value matching ~4.2V if it detects a button press, running function (StartMotor).
 
-###### No adjustability was necessary in this case to a simple MAX throttle NO throttle worked pretty well, the throttle can be adjusted by simply varying the "MAX" variable value in the ramp function.
+###### No adjustability was necessary in this case so a simple MAX throttle was sufficient, NO refined throttle control worked pretty well, the throttle can be adjusted by simply varying the "MAX" variable value in the ramp function. The constants MIN/MAX are tuned to be as close to the motor controller thresholds as possible without passing them.
 
 ```c++
 //Arduino code to adjust the throttle of the EVB 500 electric scooter
@@ -51,8 +51,8 @@ const int ButtonPin = 4;
 int ButtonState = 0;
 
 //Values for the throttle adjustment
-int MIN = 40; 
-int MAX = 225;
+const int MIN = 40; 
+const int MAX = 225;
 int Counter = MIN;  
 
 void setup() {
@@ -119,7 +119,7 @@ void loop() {
 
 ### Final thoughts and images of the completed mod
 
-###### The electric scooter works great, no throttle glitches or other problems related to the throttle. It was more convenient to just use a button to accelerate instead of using a throttle grip. All electronics are connected to the old sensor cables and the power is cut when the power switch is flipped. A standard bicycle grip will probably be used instead of the old throttle grip.
+###### The electric scooter works great, no throttle glitches or other problems related to the throttle. It was more convenient to just use a button to accelerate instead of using a throttle grip. All electronics are connected to the old sensor cables and the power is cut when the power switch is flipped. A standard bicycle grip will be used instead of the old throttle grip.
 
 ![Final](https://i.imgur.com/koUKxbN.jpg)
 
