@@ -1,16 +1,18 @@
+//Arduino code to adjust the throttle of the EVB 500 electric scooter
 
+//Pins used for the project
 const int OutputPin = 3;
 const int ButtonPin = 4;
 
-int ButtonState = 0;          
- 
+int ButtonState = 0;
+
+//Values for the throttle adjustment
 int MIN = 40; 
 int MAX = 225;
 int Counter = MIN;  
 
 void setup() {
-
-  //Serial.begin(115200);
+    
   pinMode(OutputPin, OUTPUT);
   pinMode(ButtonPin, INPUT);
 }
